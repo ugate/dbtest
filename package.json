@@ -1,5 +1,5 @@
 {
-  "name": "oracledb-test",
+  "name": "dbtest",
   "description": "Oracle Database Test",
   "version": "1.0.0",
   "main": "index.js",
