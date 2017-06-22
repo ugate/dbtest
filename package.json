@@ -1,0 +1,11 @@
+{
+  "name": "oracledb-test",
+  "description": "Oracle Database Test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "ISC",
+  "dependencies": {
+    "sequelize": "4.x.x",
+    "oracledb": "1.x.x"
+  }
+}
