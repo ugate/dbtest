@@ -1,12 +1,22 @@
 const DB = require('./db');
 const conf = require('./dbconf');
+const cache = {
+  method: (cacheFuncName, funcToCache, cacheOptions) => {
+    // typically the cache would be soemthing more robust like Redis, etc.
+    this[cacheFuncName] = funcToCache;
+  },
+  methods: {}
+};
 
-const db = new DB(conf, null, null, (err) => {
+const db = new DB(conf, cache, null, (err) => {
   if (err) return console.error(err);
-  console.log('DB ready');
+  console.log('Executing test SQL');
 
-  // assumes the project has a test/sysdate.sql file present
-  db.conn1.test.sysdate({ b: 1 }, null, null, function testDbCb(err, rslt) {
+  // when the DB connection defined in dbconf.json has a name the path
+  // uses the "name" value in place of the actual value
+  // in this case it would have been db.test.sysdate
+  // this allows the same SQL files to be used in multiple connections
+  db.conn1.sysdate({ b: 1 }, null, null, function testDbCb(err, rslt) {
     if (err) return console.error(err);
     console.dir(rslt);
   });

@@ -58,6 +58,7 @@ class DB {
   /**
   * Creates a new database manager
   * @arg {Object} conf the configuration
+  * @arg {String} [conf.mainPath=require.main] root directory starting point to look for DB files (defaults to `require.main` path)
   * @arg {String} [conf.privatePath=process.cwd()] current working directory where generated DB manager files will be generated (if any)
   * @arg {Object} conf.univ the universal DB configuration that, for security and sharing puposes, remains external to an application
   * @arg {Object} conf.univ.db the database configuration that contains connection ID objects that match the connection IDs of each of the conf.db.connections - each connection object should contain a
@@ -93,7 +94,8 @@ class DB {
   * @arg {function} [readyCb] the callback function(error) when all of the connections/pools are ready for use
   */
   constructor(conf, cache, logging, readyCb) {
-    const db = internal(this), connCnt = conf.db.connections.length;
+    const db = internal(this), connCnt = conf.db.connections.length, mainPath = conf.mainPath || (require.main && require.main.filename.replace(/([^\\\/]*)$/, '')) || process.cwd();
+    const privatePath = conf.privatePath || process.cwd();
     db.at.sqls = new Array(connCnt);
     db.at.log = (logging && logging(['db'])) || console.log;
     var ccnt = 0, errored;
@@ -106,7 +108,7 @@ class DB {
       dlct = conn.sql.dialect.toLowerCase();
       conn.sql.logging = conn.sql.log === false ? false : logging && logging([...conn.sql.log, 'db', conn.name, dlct, conn.service, conn.id, `v${conn.version || 0}`]); // override ORM logging
       if (dlct === 'oracle') {
-        orm = new OracleDB(def.username, def.password, conn.sql, conn.service, conn.sid, conf.privatePath, track, conn.sql.logging, conf.debug);
+        orm = new OracleDB(def.username, def.password, conn.sql, conn.service, conn.sid, privatePath, track, conn.sql.logging, conf.debug);
       } else {
         orm = new Sequelize(conn.service || conn.sid, def.username, def.password, conn.sql); // TODO : Remove Sequalize (not needed)
         if (!orm.init) orm.init = function sequelizeInit(opts, scb) {
@@ -115,7 +117,7 @@ class DB {
       }
       // prepared SQL functions from file(s) that reside under the defined name and dialect (or "default" when dialect is flagged accordingly)
       if (db.this[conn.name]) throw new Error(`DB connection ID ${conn.id} cannot have a duplicate name for ${conn.name}`);
-      db.at.sqls[i] = new SQLS(conf.mainPath, cache, conn.preparedSql, (db.this[conn.name] = {}), new DBO(orm, conf, conn), conn, connCb);
+      db.at.sqls[i] = new SQLS(mainPath, cache, conn.preparedSql, (db.this[conn.name] = {}), new DBO(orm, conf, conn), conn, connCb);
     }
     function connCb(err) {
       if (++ccnt && ((err && !errored && (errored = true)) || (!errored && ccnt === conf.db.connections.length))) {

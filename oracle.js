@@ -42,7 +42,7 @@ module.exports = class OracleDB {
     ora.at.oracledb.Promise = Promise; // tell Oracle to use the built-in promise
 
     ora.at.queryTypes = { SELECT: 'select' };
-    ora.at.logger = logger;
+    ora.at.logger = logger || console.log;
     ora.at.debug = debug;
     ora.at.pool = { conf: gopts.dialectOptions || {}, src: null };
     ora.at.gopts = gopts;
