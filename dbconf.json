@@ -1,0 +1,48 @@
+{
+  "univ": {
+    "db": {
+      "someIdThatMatchesGlobalPropName": {
+        "host": "mydbhost.example.com",
+        "username": "myusername",
+        "password": "mypassword"
+      },
+      "someIdThatMatchesGlobalPropName2": {
+        "host": "mydbhost2.example.com",
+        "username": "myusername2",
+        "password": "mypassword2"
+      }
+    }
+  },
+  "db": {
+    "connections": [
+      {
+        "id": "someIdThatMatchesUnivPropName",
+        "name": "conn1",
+        "dir": "db/someFolder",
+        "version": 1,
+        "service": "MYSVC",
+        "params": { "dateFormat": "yyyy-mm-dd\"T\"hh24:mi:ss.ff3\"Z\"" },
+        "preparedSql": { "cache": false },
+        "sql": {
+          "dialect": "oracle",
+          "connectionClass": "MYPOOL",
+          "pool": { "max": 10, "min": 10, "increment": 0, "idle": 0, "timeout": 60000 },
+          "log": [ "info" ]
+        }
+      },
+      {
+        "id": "someIdThatMatchesUnivPropName2",
+        "name": "conn2",
+        "dir": "db/someFolder2",
+        "sid": "MYSID",
+        "preparedSql": { "cache": false },
+        "sql": {
+          "dialect": "oracle",
+          "connectionClass": "MYPOOL2",
+          "pool": { "max": 10, "min": 10, "increment": 0, "idle": 60, "timeout": 60000, "alias": "MYPOOL2" },
+          "log": [ "info" ]
+        }
+      }
+    ]
+  },
+}
